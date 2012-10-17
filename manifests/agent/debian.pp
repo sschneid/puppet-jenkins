@@ -6,7 +6,7 @@ class agent::debian {
       'bison',
       'build-essential',
       'curl',
-      'git-core'
+      'git-core',
       'libc6-dev',
       'libreadline5',
       'libreadline6-dev',
