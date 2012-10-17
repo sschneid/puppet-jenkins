@@ -1,4 +1,4 @@
-class agent::debian {
+class jenkins::agent::debian {
   package {
     [
       'autoconf',
