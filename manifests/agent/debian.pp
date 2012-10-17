@@ -13,7 +13,7 @@ class agent::debian {
       'libsqlite3-dev',
       'libssl-dev',
       'libtool',
-      'libxml2-dev'
+      'libxml2-dev',
       'libxslt-dev',
       'libyaml-dev',
       'ncurses-dev',
