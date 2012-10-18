@@ -21,7 +21,6 @@ class jenkins::server (
       site_alias => $real_site_alias,
   }
 
-
   # Collect agents associated with this server
   Jenkins_agent <<| server == $real_site_alias |>>
   if ($real_site_alias != $::fqdn) {
