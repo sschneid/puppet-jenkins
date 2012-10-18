@@ -38,6 +38,7 @@ Puppet::Type.type(:jenkins_agent).provide(:json, :parent => Puppet::Provider) do
   end
 
   def destroy
+    create
     @property_hash[:ensure] = :absent
   end
 
