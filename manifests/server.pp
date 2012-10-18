@@ -1,7 +1,7 @@
-class jenkins::server inherits jenkins (
+class jenkins::server (
   $version = 'installed',
   $site_alias = undef,
-) {
+) inherits jenkins {
   if ($site_alias) {
     $real_site_alias = $site_alias
   }
