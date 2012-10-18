@@ -32,6 +32,7 @@ module Puppet
     newparam(:launcher) do
       desc "Type of connection. ssh or jnlp"
       newvalues :ssh, :jnlp
+      defaultto :ssh
     end
 
     newparam(:homedir) do

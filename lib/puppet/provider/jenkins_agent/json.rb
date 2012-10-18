@@ -1,4 +1,4 @@
-require 'pp'
+require 'facter'
 require 'puppet/face'
 require 'net/http'
 require 'uri'
@@ -57,6 +57,13 @@ Puppet::Type.type(:jenkins_agent).provide(:json, :parent => Puppet::Provider) do
       }
     end
 
+    if servers.empty?
+      servers[Facter["jenkins_server"].value()] = {
+        :username => Facter["jenkins_username"].value(),
+        :password => Facter["jenkins_password"].value()
+      }
+    end
+
     servers.each do |server, creds|
       username = creds[:username]
       password = creds[:password]
@@ -68,15 +75,16 @@ Puppet::Type.type(:jenkins_agent).provide(:json, :parent => Puppet::Provider) do
       data = JSON.parse(response.body)
       data['computer'].each do |computer|
         next if computer["displayName"] == "master"
-
         properties = {
-          :name     => computer["displayName"],
-          :ensure   => :present,
-          :server   => server,
-          :username => username,
-          :password => password,
-          :provider => :json,
-          :launcher => nil
+          :name      => computer["displayName"],
+          :ensure    => :present,
+          :server    => server,
+          :username  => username,
+          :password  => password,
+          :launcher  => computer["jnlpAgent"] ? :jnlp : :ssh,
+          :executors => computer["numExecutors"],
+          :provider  => :json,
+          :homedir   => nil,
         }
         instances << new(properties)
       end
