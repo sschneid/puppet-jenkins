@@ -34,6 +34,8 @@ Puppet::Type.type(:jenkins_agent).provide(:json, :parent => Puppet::Provider) do
       :executors => @resource[:executors],
       :launcher  => @resource[:launcher],
       :homedir   => @resource[:homedir],
+      :ssh_user  => @resource[:ssh_user],
+      :ssh_key   => @resource[:ssh_key],
     }
   end
 
@@ -57,6 +59,7 @@ Puppet::Type.type(:jenkins_agent).provide(:json, :parent => Puppet::Provider) do
       }
     end
 
+    # If no servers are available, query facter for CLI puppet resource runs
     if servers.empty?
       servers[Facter["jenkins_server"].value()] = {
         :username => Facter["jenkins_username"].value(),
@@ -99,16 +102,21 @@ Puppet::Type.type(:jenkins_agent).provide(:json, :parent => Puppet::Provider) do
     host      = @property_hash[:name]
     executors = @property_hash[:executors]
     homedir   = @property_hash[:homedir]
+    ssh_user  = @property_hash[:ssh_user]
+    ssh_key   = @property_hash[:ssh_key]
     launcher  = case @property_hash[:launcher]
                   when :ssh  then {
                     "stapler-class" => "hudson.plugins.sshslaves.SSHLauncher",
-                    "host" => host
+                    "host" => host,
+                    "username" => ssh_user,
+                    "privatekey" => ssh_key,
                   }
                   when :jnlp then {
                     "stapler-class" => "hudson.slaves.JNLPLauncher"
                   }
                 end
 
+    pp launcher
     if @property_hash[:ensure] == :present
       api_json = JSON.generate({
         "launcher" => launcher,

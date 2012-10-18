@@ -39,5 +39,13 @@ module Puppet
       desc "Home directory of jenkins on this slave"
       defaultto "/home/jenkins"
     end
+
+    newparam(:ssh_user) do
+      desc "Username for the SSH launcher"
+    end
+
+    newparam(:ssh_key) do
+      desc "Private key on the master for the SSH launcher"
+    end
   end
 end
