@@ -36,6 +36,7 @@ Puppet::Type.type(:jenkins_agent).provide(:json, :parent => Puppet::Provider) do
       :homedir   => @resource[:homedir],
       :ssh_user  => @resource[:ssh_user],
       :ssh_key   => @resource[:ssh_key],
+      :labels    => @resource[:labels],
     }
   end
 
@@ -104,6 +105,7 @@ Puppet::Type.type(:jenkins_agent).provide(:json, :parent => Puppet::Provider) do
     homedir   = @property_hash[:homedir]
     ssh_user  = @property_hash[:ssh_user]
     ssh_key   = @property_hash[:ssh_key]
+    labels    = @property_hash[:labels]
     launcher  = case @property_hash[:launcher]
                   when :ssh  then {
                     "stapler-class" => "hudson.plugins.sshslaves.SSHLauncher",
@@ -116,7 +118,6 @@ Puppet::Type.type(:jenkins_agent).provide(:json, :parent => Puppet::Provider) do
                   }
                 end
 
-    pp launcher
     if @property_hash[:ensure] == :present
       api_json = JSON.generate({
         "launcher" => launcher,
@@ -131,8 +132,8 @@ Puppet::Type.type(:jenkins_agent).provide(:json, :parent => Puppet::Provider) do
         "remoteFS" => homedir,
         "type" => "hudson.slaves.DumbSlave$DescriptorImpl",
         "nodeDescription" => host,
-        "labelString" => host,
-        "mode" => "NORMAL"
+        "labelString" => labels,
+        "MODE" => "NORMAL"
       })
 
       api_url = "http://#{server}/computer/doCreateItem?json=#{api_json}&type=hudson.slaves.DumbSlave$DescriptorImpl&name=#{name}"

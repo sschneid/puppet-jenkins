@@ -47,5 +47,9 @@ module Puppet
     newparam(:ssh_key) do
       desc "Private key on the master for the SSH launcher"
     end
+
+    newparam(:labels) do
+      desc "Jenkins node labels"
+    end
   end
 end
