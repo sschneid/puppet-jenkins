@@ -1,4 +1,4 @@
-class jenkins::agent {
+class jenkins::agent inherits jenkins {
   case $::operatingsystem {
     'Debian': { include jenkins::agent::debian }
 

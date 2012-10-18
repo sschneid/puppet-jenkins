@@ -1,4 +1,4 @@
-class jenkins::server (
+class jenkins::server inherits jenkins (
   $version = 'installed',
   $site_alias = undef,
 ) {
@@ -9,11 +9,6 @@ class jenkins::server (
     $real_site_alias = $::fqdn
   }
 
-  package {
-    'jre':
-        ensure => '1.7.0',
-        noop   => true
-  }
   include jenkins::repo
   class {
     'jenkins::package':
