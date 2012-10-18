@@ -28,5 +28,10 @@ module Puppet
       desc "Number of executors"
       defaultto 5
     end
+
+    newparam(:launcher) do
+      desc "Type of connection. ssh or jnlp"
+      newvalues :ssh, :jnlp
+    end
   end
 end

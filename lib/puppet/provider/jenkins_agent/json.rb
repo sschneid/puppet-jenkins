@@ -9,14 +9,13 @@ Puppet::Type.type(:jenkins_agent).provide(:json, :parent => Puppet::Provider) do
   mk_resource_methods
 
   def exists?
-    if @property_hash[:ensure] == :present
-      return true
+    unless @property_hash[:ensure].nil?
+      return @property_hash[:ensure] == :present
     end
-    name = @resource[:name]
-    res = resource.to_hash
-    server   = res[:server]
-    username = res[:username]
-    password = res[:password]
+    name     = @resource[:name]
+    server   = @resource[:server]
+    username = @resource[:username]
+    password = @resource[:password]
     api_url = "http://#{server}/computer/#{name}/api/json"
     url = URI.parse(api_url)
     request = Net::HTTP::Get.new(url.path)
@@ -26,24 +25,23 @@ Puppet::Type.type(:jenkins_agent).provide(:json, :parent => Puppet::Provider) do
   end
 
   def create
-    puts "create called for #{@resource[:name]}"
     @property_hash = {
       :name      => @resource[:name],
       :ensure    => :present,
       :server    => @resource[:server],
       :username  => @resource[:username],
       :password  => @resource[:password],
-      :executors => @resource[:executors]
+      :executors => @resource[:executors],
+      :launcher  => @resource[:launcher],
     }
   end
 
   def destroy
-    create
+    create if @property_hash[:name].nil?
     @property_hash[:ensure] = :absent
   end
 
   def self.instances
-    Puppet.debug("Self.instances called")
     instances = []
     catalog_resources = Puppet::Face[:catalog, :current].select('*', 'jenkins_agent')
 
@@ -76,7 +74,8 @@ Puppet::Type.type(:jenkins_agent).provide(:json, :parent => Puppet::Provider) do
           :server   => server,
           :username => username,
           :password => password,
-          :provider => :json
+          :provider => :json,
+          :launcher => nil
         }
         instances << new(properties)
       end
@@ -90,13 +89,19 @@ Puppet::Type.type(:jenkins_agent).provide(:json, :parent => Puppet::Provider) do
     password  = @property_hash[:password]
     host      = @property_hash[:name]
     executors = @property_hash[:executors]
+    launcher  = case @property_hash[:launcher]
+                  when :ssh  then {
+                    "stapler-class" => "hudson.plugins.sshslaves.SSHLauncher",
+                    "host" => host
+                  }
+                  when :jnlp then {
+                    "stapler-class" => "hudson.slaves.JNLPLauncher"
+                  }
+                end
 
     if @property_hash[:ensure] == :present
       api_json = JSON.generate({
-        "launcher" => {
-          "stapler-class" => "hudson.plugins.sshslaves.SSHLauncher",
-          "host" => host
-        },
+        "launcher" => launcher,
         "numExecutors" => executors,
         "nodeProperties" => {
           "stapler-class-bag" => "true"
