@@ -33,6 +33,7 @@ Puppet::Type.type(:jenkins_agent).provide(:json, :parent => Puppet::Provider) do
       :password  => @resource[:password],
       :executors => @resource[:executors],
       :launcher  => @resource[:launcher],
+      :homedir   => @resource[:homedir],
     }
   end
 
@@ -89,6 +90,7 @@ Puppet::Type.type(:jenkins_agent).provide(:json, :parent => Puppet::Provider) do
     password  = @property_hash[:password]
     host      = @property_hash[:name]
     executors = @property_hash[:executors]
+    homedir   = @property_hash[:homedir]
     launcher  = case @property_hash[:launcher]
                   when :ssh  then {
                     "stapler-class" => "hudson.plugins.sshslaves.SSHLauncher",
@@ -110,7 +112,7 @@ Puppet::Type.type(:jenkins_agent).provide(:json, :parent => Puppet::Provider) do
         "retentionStrategy" => {
           "stapler-class" => "hudson.slaves.RetentionStrategy$Always"
         },
-        "remoteFS" => "/home/jenkins",
+        "remoteFS" => homedir,
         "type" => "hudson.slaves.DumbSlave$DescriptorImpl",
         "nodeDescription" => host,
         "labelString" => host,

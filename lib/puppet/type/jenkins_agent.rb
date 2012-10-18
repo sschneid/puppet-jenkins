@@ -33,5 +33,10 @@ module Puppet
       desc "Type of connection. ssh or jnlp"
       newvalues :ssh, :jnlp
     end
+
+    newparam(:homedir) do
+      desc "Home directory of jenkins on this slave"
+      defaultto "/home/jenkins"
+    end
   end
 end
