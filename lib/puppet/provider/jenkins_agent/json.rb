@@ -28,11 +28,12 @@ Puppet::Type.type(:jenkins_agent).provide(:json, :parent => Puppet::Provider) do
   def create
     puts "create called for #{@resource[:name]}"
     @property_hash = {
-      :name     => @resource[:name],
-      :ensure   => :present,
-      :server   => @resource[:server],
-      :username => @resource[:username],
-      :password => @resource[:password]
+      :name      => @resource[:name],
+      :ensure    => :present,
+      :server    => @resource[:server],
+      :username  => @resource[:username],
+      :password  => @resource[:password],
+      :executors => @resource[:executors]
     }
   end
 
@@ -83,10 +84,11 @@ Puppet::Type.type(:jenkins_agent).provide(:json, :parent => Puppet::Provider) do
   end
 
   def flush
-    server   = @property_hash[:server]
-    username = @property_hash[:username]
-    password = @property_hash[:password]
-    host     = @property_hash[:name]
+    server    = @property_hash[:server]
+    username  = @property_hash[:username]
+    password  = @property_hash[:password]
+    host      = @property_hash[:name]
+    executors = @property_hash[:executors]
 
     if @property_hash[:ensure] == :present
       api_json = JSON.generate({
@@ -94,7 +96,7 @@ Puppet::Type.type(:jenkins_agent).provide(:json, :parent => Puppet::Provider) do
           "stapler-class" => "hudson.plugins.sshslaves.SSHLauncher",
           "host" => host
         },
-        "numExecutors" => 2,
+        "numExecutors" => executors,
         "nodeProperties" => {
           "stapler-class-bag" => "true"
         },

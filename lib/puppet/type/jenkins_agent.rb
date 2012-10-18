@@ -23,5 +23,10 @@ module Puppet
     newparam(:server) do
       desc "Hostname of the jenkins master"
     end
+
+    newparam(:executors) do
+      desc "Number of executors"
+      defaultto 5
+    end
   end
 end
