@@ -1,5 +1,4 @@
 class jenkins::repo {
-  # JJM These anchors work around #8040
   anchor { 'jenkins::repo::alpha': }
   anchor { 'jenkins::repo::omega': }
   case $::osfamily {
@@ -21,4 +20,3 @@ class jenkins::repo {
     }
   }
 }
-

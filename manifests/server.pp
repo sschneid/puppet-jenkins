@@ -10,15 +10,13 @@ class jenkins::server (
   }
 
   include jenkins::repo
-  class {
-    'jenkins::package':
-      version => $version,
+  class { 'jenkins::package':
+    version => $version,
   }
   include jenkins::service
   include jenkins::firewall
-  class {
-    'jenkins::proxy':
-      site_alias => $real_site_alias,
+  class { 'jenkins::proxy':
+    site_alias => $real_site_alias,
   }
 
   # Collect agents associated with this server
@@ -31,5 +29,4 @@ class jenkins::server (
   Class['jenkins::package'] ->
   Class['jenkins::service'] ->
   Class['jenkins::proxy']
-
 }

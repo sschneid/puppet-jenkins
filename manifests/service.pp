@@ -6,4 +6,3 @@ class jenkins::service {
     hasrestart => true,
   }
 }
-
