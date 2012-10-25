@@ -7,6 +7,8 @@ class jenkins::agent (
     }
   }
 
+  include java
+
   case $::operatingsystem {
     'Debian': { include jenkins::agent::debian }
 
