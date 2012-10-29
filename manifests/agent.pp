@@ -1,5 +1,4 @@
 class jenkins::agent (
-  $name      = undef,
   $server    = undef,
 
   $username  = undef,
@@ -14,7 +13,6 @@ class jenkins::agent (
 ) inherits jenkins {
   if ($server) {
     @@jenkins_agent { $::fqdn:
-      name      => $name,
       server    => $server,
 
       username  => $username,
