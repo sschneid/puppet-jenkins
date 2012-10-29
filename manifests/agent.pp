@@ -1,8 +1,10 @@
 class jenkins::agent (
+  $labels = undef,
   $server = undef,
 ) inherits jenkins {
   if ($server) {
     @@jenkins_agent { $::fqdn:
+      labels => $labels,
       server => $server,
     }
   }
