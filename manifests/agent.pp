@@ -1,4 +1,4 @@
-class jenkins::agent (
+define jenkins::agent (
   $server    = undef,
 
   $username  = undef,
@@ -10,7 +10,7 @@ class jenkins::agent (
   $ssh_user  = undef,
   $ssh_key   = undef,
   $labels    = undef,
-) inherits jenkins {
+) {
   if ($server) {
     @@jenkins_agent { $::fqdn:
       server    => $server,
