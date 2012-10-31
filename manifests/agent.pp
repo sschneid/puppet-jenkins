@@ -1,6 +1,8 @@
 define jenkins::agent (
   $server    = undef,
 
+  $hostname  = undef,
+
   $username  = undef,
   $password  = undef,
 
@@ -12,7 +14,14 @@ define jenkins::agent (
   $labels    = undef,
 ) {
   if ($server) {
-    @@jenkins_agent { $::fqdn:
+    if ($hostname) {
+      $agent = $hostname
+    }
+    else {
+      $agent = $::fqdn
+    }
+
+    @@jenkins_agent { $agent:
       server    => $server,
 
       username  => $username,
