@@ -14,7 +14,7 @@ define jenkins::server (
     version => $version,
   }
   include jenkins::service
-  include jenkins::firewall
+# include jenkins::firewall
   class { 'jenkins::proxy':
     site_alias => $real_site_alias,
   }
