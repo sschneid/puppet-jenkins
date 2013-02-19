@@ -24,6 +24,11 @@ module Puppet
       desc "Hostname of the jenkins master"
     end
 
+    newparam(:port) do
+      desc 'port where jenkins server is hosted'
+      defaultto 80
+    end
+
     newparam(:executors) do
       desc "Number of executors"
       defaultto 5
@@ -46,6 +51,10 @@ module Puppet
 
     newparam(:ssh_key) do
       desc "Private key on the master for the SSH launcher"
+    end
+
+    newparam(:ssh_password) do
+      desc 'Password to use on master for SSH Launcher'
     end
 
     newparam(:labels) do
