@@ -14,29 +14,32 @@ Puppet::Type.type(:jenkins_agent).provide(:json, :parent => Puppet::Provider) do
     end
     name     = @resource[:name]
     server   = @resource[:server]
+    port     = @resource[:port]
     username = @resource[:username]
     password = @resource[:password]
     api_url = "http://#{server}/computer/#{name}/api/json"
     url = URI.parse(api_url)
     request = Net::HTTP::Get.new(url.path)
     request.basic_auth(username, password) if username
-    response = Net::HTTP.start(url.host, url.port) { |http| http.request(request) }
+    response = Net::HTTP.start(url.host, port) { |http| http.request(request) }
     return response.kind_of?(Net::HTTPSuccess)
   end
 
   def create
     @property_hash = {
-      :name      => @resource[:name],
-      :ensure    => :present,
-      :server    => @resource[:server],
-      :username  => @resource[:username],
-      :password  => @resource[:password],
-      :executors => @resource[:executors],
-      :launcher  => @resource[:launcher],
-      :homedir   => @resource[:homedir],
-      :ssh_user  => @resource[:ssh_user],
-      :ssh_key   => @resource[:ssh_key],
-      :labels    => @resource[:labels],
+      :name         => @resource[:name],
+      :ensure       => :present,
+      :server       => @resource[:server],
+      :port         => @resource[:port],
+      :username     => @resource[:username],
+      :password     => @resource[:password],
+      :executors    => @resource[:executors],
+      :launcher     => @resource[:launcher],
+      :homedir      => @resource[:homedir],
+      :ssh_user     => @resource[:ssh_user],
+      :ssh_key      => @resource[:ssh_key],
+      :ssh_password => @resource[:ssh_password],
+      :labels       => @resource[:labels],
     }
   end
 
@@ -97,20 +100,23 @@ Puppet::Type.type(:jenkins_agent).provide(:json, :parent => Puppet::Provider) do
   end
 
   def flush
-    server    = @property_hash[:server]
-    username  = @property_hash[:username]
-    password  = @property_hash[:password]
-    host      = @property_hash[:name]
-    executors = @property_hash[:executors]
-    homedir   = @property_hash[:homedir]
-    ssh_user  = @property_hash[:ssh_user]
-    ssh_key   = @property_hash[:ssh_key]
-    labels    = @property_hash[:labels]
+    server       = @property_hash[:server]
+    port         = @property_hash[:port]
+    username     = @property_hash[:username]
+    password     = @property_hash[:password]
+    host         = @property_hash[:name]
+    executors    = @property_hash[:executors]
+    homedir      = @property_hash[:homedir]
+    ssh_user     = @property_hash[:ssh_user]
+    ssh_key      = @property_hash[:ssh_key]
+    ssh_password = @property_hash[:ssh_password]
+    labels       = @property_hash[:labels]
     launcher  = case @property_hash[:launcher]
                   when :ssh  then {
                     "stapler-class" => "hudson.plugins.sshslaves.SSHLauncher",
                     "host" => host,
                     "username" => ssh_user,
+                    "password" => ssh_password,
                     "privatekey" => ssh_key,
                   }
                   when :jnlp then {
@@ -140,14 +146,14 @@ Puppet::Type.type(:jenkins_agent).provide(:json, :parent => Puppet::Provider) do
       url = URI.parse(URI.escape(api_url))
       request = Net::HTTP::Get.new("#{url.path}?#{url.query}")
       request.basic_auth(username, password) if username
-      response = Net::HTTP.start(url.host, url.port) { |http| http.request(request) }
+      response = Net::HTTP.start(url.host, port) { |http| http.request(request) }
       puts response.body
     else
       api_url = "http://#{server}/computer/#{name}/doDelete"
       url = URI.parse(api_url)
       request = Net::HTTP::Get.new(url.path)
       request.basic_auth(username, password) if username
-      response = Net::HTTP.start(url.host, url.port) { |http| http.request(request) }
+      response = Net::HTTP.start(url.host, port) { |http| http.request(request) }
     end
   end
 end
