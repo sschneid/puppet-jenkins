@@ -21,13 +21,6 @@ define jenkins::agent (
       $agent = $::fqdn
     }
 
-    if (hiera("jenkins::auth_username::${server}")) {
-      $username = hiera("jenkins::auth_username::${server}")
-    }
-    if (hiera("jenkins::auth_password::${server}")) {
-      $password = hiera("jenkins::auth_password::${server}")
-    }
-
     @@jenkins_agent { $agent:
       server    => $server,
 
