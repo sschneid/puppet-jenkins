@@ -36,7 +36,9 @@ define jenkins::agent (
     }
   }
 
-  include java
+  if ($kernel != 'darwin') {
+    include java
+  }
 
   case $::operatingsystem {
     'Debian': { include jenkins::agent::debian }
